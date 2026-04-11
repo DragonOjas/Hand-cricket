@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Cricket | Cosmic Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="tail-container text-white min-h-screen flex flex-col overflow-hidden relative">
+
+    <div id="stars-container" class="stars"></div>
+
+    <div class="flex justify-between items-center px-8 py-5 border-b border-cyan-400/20 bg-black/50 backdrop-blur-lg z-50">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-emerald-400 text-black rounded-2xl flex items-center justify-center text-4xl shadow-lg animate-pulse">🏏</div>
+            <h1 id="game-title" class="text-5xl font-bold tracking-[6px] title-glow">HAND CRICKET</h1>
+        </div>
+        
+        <div class="flex items-center gap-6">
+            <div onclick="showNameModal()" class="flex items-center bg-black/70 hover:bg-black/90 px-5 py-2.5 rounded-3xl border border-cyan-400/40 cursor-pointer hover:scale-105">
+                <span class="text-cyan-400 text-sm mr-3">PLAYER</span>
+                <span id="player-name-display" class="font-bold text-xl"></span>
+            </div>
+            <div onclick="showThemeModal()" id="theme-icon" class="w-11 h-11 rounded-2xl bg-gradient-to-br from-cyan-400 to-emerald-400 flex items-center justify-center text-3xl cursor-pointer shadow-inner hover:scale-110 hover:rotate-12">
+                🌊
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-1 flex items-center justify-center p-6 relative z-10" id="main-container">
+        <div id="menu-screen" class="screen w-full max-w-2xl mx-auto flex flex-col items-center text-center">
+            <div class="mb-10">
+                <div class="inline-flex items-center gap-3 bg-black/60 px-8 py-3 rounded-3xl border border-cyan-400/30 mb-6">
+                    <span class="relative flex h-4 w-4">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-4 w-4 bg-cyan-400"></span>
+                    </span>
+                    <span class="text-cyan-300 text-sm tracking-widest">Ready for a legendary game?</span>
+                </div>
+                <h2 class="text-6xl font-bold title-glow mb-2">Hand Cricket</h2>
+                <p class="text-cyan-200 text-xl">The ultimate finger cricket experience.</p>
+            </div>
+            
+            <div class="space-y-5 w-full max-w-md">
+                <button onclick="showLevels()" class="button-hover button-glow w-full bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-600 hover:brightness-110 text-white text-2xl font-bold py-9 rounded-3xl shadow-2xl flex items-center justify-center gap-5 border-4 border-white/20">
+                    <span class="text-6xl">⚡</span><span>PLAY GAME</span>
+                </button>
+                <button onclick="showThemeModal()" class="button-hover button-glow w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:brightness-110 text-white text-2xl font-bold py-9 rounded-3xl shadow-2xl flex items-center justify-center gap-5 border-4 border-white/20">
+                    <span class="text-6xl">🌊</span><span>CHOOSE THEME</span>
+                </button>
+                <button onclick="showNameModal()" class="button-hover button-glow w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:brightness-110 text-white text-2xl font-bold py-9 rounded-3xl shadow-2xl flex items-center justify-center gap-5 border-4 border-white/20">
+                    <span class="text-6xl">👤</span><span>SET PLAYER NAME</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="levels-screen" class="screen hidden w-full max-w-xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-5xl font-bold text-cyan-300 mb-3">SELECT DIFFICULTY</h2>
+                <p class="text-white/60">Higher difficulty = smarter AI</p>
+            </div>
+            <div class="flex flex-col gap-6">
+                <div onclick="startGame('easy')" class="group flex items-center justify-between bg-black/70 hover:bg-cyan-950/70 border-2 border-cyan-400 rounded-3xl px-10 py-8 cursor-pointer hover:scale-[1.02]">
+                    <div class="flex items-center gap-8">
+                        <div class="text-6xl">😎</div>
+                        <div><div class="text-4xl font-bold text-cyan-400">EASY</div></div>
+                    </div>
+                    <div class="text-7xl group-hover:scale-110">🏏</div>
+                </div>
+            </div>
+            <button onclick="backToMenu()" class="mt-10 mx-auto block text-cyan-300 hover:text-white text-sm flex items-center gap-2">← BACK TO MENU</button>
+        </div>
+
+        </div>
+
+    <div onclick="if(event.target.id === 'name-modal') hideNameModal()" id="name-modal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+        <div onclick="event.stopImmediatePropagation()" class="modal-card bg-gradient-to-b from-[#0a1f3a] to-[#001122] border-2 border-cyan-400 rounded-3xl max-w-md w-full mx-4 p-8 shadow-2xl shadow-cyan-500/50">
+            <h3 class="text-4xl font-bold mb-6 text-center text-cyan-300 tracking-widest">ENTER NAME</h3>
+            <input id="name-input" type="text" maxlength="12" class="w-full bg-black/70 border-2 border-cyan-400 rounded-2xl px-6 py-5 text-3xl text-center text-white focus:outline-none mb-8">
+            <div class="flex gap-4">
+                <button onclick="hideNameModal()" class="flex-1 py-5 text-white/70 font-bold text-xl hover:bg-white/10 rounded-2xl">CANCEL</button>
+                <button onclick="saveName()" class="flex-1 py-5 bg-cyan-500 text-black font-bold text-xl rounded-2xl">SAVE</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
