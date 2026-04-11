@@ -1,1 +1,1030 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Cricket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap');
+        
+        :root {
+            --cricket-green: #00c853;
+        }
+        
+        * {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        
+        .tail-container * {
+            font-family: 'Press Start 2P', system-ui;
+        }
+        
+        .game-bg {
+            background: linear-gradient(180deg, #0a3d0a 0%, #001a00 100%);
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(255, 215, 0, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255, 215, 0, 0.15) 0%, transparent 50%);
+        }
+        
+        .stadium-bg {
+            animation: stadiumPulse 8s ease infinite;
+        }
+        
+        @keyframes stadiumPulse {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .hand {
+            animation: fistShake 0.8s ease-in-out infinite;
+        }
+        
+        .reveal {
+            animation: revealPop 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        
+        .score-pop {
+            animation: scorePop 1.2s ease forwards;
+        }
+        
+        .title-glow {
+            text-shadow: 
+                0 0 20px #ffd700,
+                0 0 40px #ffd700,
+                0 0 60px #00c853;
+        }
+        
+        .screen {
+            animation: screenFade 0.4s ease;
+        }
+        
+        .button-hover {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .button-hover::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 40%;
+            height: 300%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,0.4),
+                transparent
+            );
+            transform: skewX(-25deg);
+            animation: shimmer 4s linear infinite;
+        }
+        
+        @keyframes shimmer {
+            100% { transform: translateX(300%); }
+        }
+        
+        .out-text {
+            animation: outShake 0.5s ease-in-out 3;
+        }
+    </style>
+</head>
+<body class="tail-container game-bg text-white min-h-screen flex flex-col">
+    <!-- HEADER / TITLE -->
+    <div class="flex justify-between items-center px-6 py-4 border-b border-yellow-400/30 bg-black/40 backdrop-blur-md">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-yellow-400 text-black rounded-2xl flex items-center justify-center text-3xl rotate-12">🏏</div>
+            <h1 id="game-title" class="text-5xl font-bold tracking-[4px] title-glow">HAND CRICKET</h1>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <!-- Player name badge -->
+            <div onclick="showNameModal()" class="flex items-center bg-black/60 hover:bg-black/80 px-4 py-2 rounded-3xl border border-yellow-400/50 cursor-pointer">
+                <span class="text-yellow-400 text-sm mr-2">PLAYER</span>
+                <span id="player-name-display" class="font-bold text-lg"></span>
+            </div>
+            
+            <!-- Theme indicator -->
+            <div onclick="showThemeModal()" class="w-9 h-9 rounded-2xl bg-gradient-to-br from-emerald-400 to-yellow-400 flex items-center justify-center text-2xl cursor-pointer shadow-inner" id="theme-icon">
+                🌿
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT AREA -->
+    <div class="flex-1 flex items-center justify-center p-4 relative overflow-hidden" id="main-container">
+
+        <!-- MENU SCREEN -->
+        <div id="menu-screen" class="screen w-full max-w-2xl mx-auto flex flex-col items-center">
+            <div class="text-center mb-12">
+                <div class="inline-flex items-center justify-center bg-black/70 text-emerald-400 text-sm px-6 py-2 rounded-3xl mb-4 border border-emerald-400/30">
+                    <span class="relative flex h-3 w-3 mr-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-400"></span>
+                    </span>
+                    READY FOR THE TOSS?
+                </div>
+                <p class="text-yellow-300 text-xl">The ultimate finger cricket experience</p>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-6 w-full max-w-lg">
+                <!-- PLAY -->
+                <button onclick="showLevels()" 
+                        class="button-hover bg-gradient-to-br from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white text-2xl font-bold py-8 rounded-3xl shadow-2xl shadow-emerald-500/50 flex flex-col items-center justify-center gap-3 border-4 border-white/30">
+                    <div class="text-6xl">🏏</div>
+                    <div>PLAY</div>
+                    <div class="text-xs uppercase tracking-widest bg-white/20 px-4 py-1 rounded-2xl">3 DIFFICULTY LEVELS</div>
+                </button>
+                
+                <!-- THEME -->
+                <button onclick="showThemeModal()" 
+                        class="button-hover bg-gradient-to-br from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-2xl font-bold py-8 rounded-3xl shadow-2xl shadow-purple-500/50 flex flex-col items-center justify-center gap-3 border-4 border-white/30">
+                    <div class="text-6xl">🎨</div>
+                    <div>THEME</div>
+                    <div class="text-xs uppercase tracking-widest bg-white/20 px-4 py-1 rounded-2xl">CUSTOMIZE THE ARENA</div>
+                </button>
+                
+                <!-- NAME -->
+                <button onclick="showNameModal()" 
+                        class="button-hover bg-gradient-to-br from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-white text-2xl font-bold py-8 rounded-3xl shadow-2xl shadow-amber-500/50 flex flex-col items-center justify-center gap-3 border-4 border-white/30 col-span-2">
+                    <div class="flex gap-4 items-center">
+                        <div class="text-6xl">👤</div>
+                        <div>
+                            <div>SET YOUR NAME</div>
+                            <div id="current-player-name-small" class="text-xl font-normal text-amber-200"></div>
+                        </div>
+                    </div>
+                </button>
+                
+                <!-- LEADERBOARD -->
+                <button onclick="showLeaderboard()" 
+                        class="button-hover bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white text-2xl font-bold py-8 rounded-3xl shadow-2xl shadow-cyan-500/50 flex flex-col items-center justify-center gap-3 border-4 border-white/30 col-span-2">
+                    <div class="flex items-center gap-3">
+                        <div class="text-6xl">🏆</div>
+                        <div>LEADERBOARD</div>
+                    </div>
+                    <div class="text-sm text-cyan-200 flex items-center gap-6">
+                        <div>WINS: <span id="menu-wins" class="font-bold">0</span></div>
+                        <div>LOSSES: <span id="menu-losses" class="font-bold">0</span></div>
+                        <div>HIGH: <span id="menu-high" class="font-bold">0</span></div>
+                    </div>
+                </button>
+            </div>
+            
+            <div class="mt-10 text-xs text-white/40 flex items-center gap-2">
+                <div class="h-px bg-white/30 flex-1"></div>
+                MADE FOR YOU WITH ❤️
+                <div class="h-px bg-white/30 flex-1"></div>
+            </div>
+        </div>
+
+        <!-- LEVEL SELECT SCREEN -->
+        <div id="levels-screen" class="screen hidden w-full max-w-xl mx-auto">
+            <div class="text-center mb-8">
+                <h2 class="text-4xl font-bold mb-2">CHOOSE DIFFICULTY</h2>
+                <p class="text-yellow-300">The tougher the AI, the bigger the glory</p>
+            </div>
+            
+            <div class="flex flex-col gap-4">
+                <div onclick="startGame('easy')" class="flex items-center justify-between bg-black/60 hover:bg-emerald-900/60 border-2 border-emerald-400 rounded-3xl px-8 py-6 cursor-pointer group">
+                    <div class="flex items-center gap-6">
+                        <div class="text-5xl">😎</div>
+                        <div>
+                            <div class="text-3xl font-bold text-emerald-400">EASY</div>
+                            <div class="text-white/70">AI is chill • Random throws</div>
+                        </div>
+                    </div>
+                    <div class="text-6xl group-hover:rotate-12">🏏</div>
+                </div>
+                
+                <div onclick="startGame('medium')" class="flex items-center justify-between bg-black/60 hover:bg-yellow-900/60 border-2 border-yellow-400 rounded-3xl px-8 py-6 cursor-pointer group">
+                    <div class="flex items-center gap-6">
+                        <div class="text-5xl">🧠</div>
+                        <div>
+                            <div class="text-3xl font-bold text-yellow-400">MEDIUM</div>
+                            <div class="text-white/70">AI learns • Smarter match rate</div>
+                        </div>
+                    </div>
+                    <div class="text-6xl group-hover:rotate-12">🏏</div>
+                </div>
+                
+                <div onclick="startGame('hard')" class="flex items-center justify-between bg-black/60 hover:bg-red-900/60 border-2 border-red-400 rounded-3xl px-8 py-6 cursor-pointer group">
+                    <div class="flex items-center gap-6">
+                        <div class="text-5xl">🔥</div>
+                        <div>
+                            <div class="text-3xl font-bold text-red-400">HARD</div>
+                            <div class="text-white/70">AI predicts • 60% match chance</div>
+                        </div>
+                    </div>
+                    <div class="text-6xl group-hover:rotate-12">🏏</div>
+                </div>
+            </div>
+            
+            <button onclick="backToMenu()" 
+                    class="mt-8 mx-auto block text-white/60 hover:text-white flex items-center gap-2 text-sm uppercase">
+                ← BACK TO MENU
+            </button>
+        </div>
+
+        <!-- TOSS SCREEN -->
+        <div id="toss-screen" class="screen hidden w-full max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-6">THE TOSS</h2>
+            
+            <div class="flex justify-center gap-16 mb-10">
+                <!-- Player Hand -->
+                <div class="flex flex-col items-center">
+                    <div id="player-hand-toss" class="hand text-9xl mb-4">✊</div>
+                    <div class="text-emerald-400 font-bold text-xl">YOU</div>
+                    <div id="player-toss-name" class="text-xs text-white/60"></div>
+                </div>
+                
+                <!-- VS -->
+                <div class="flex flex-col justify-center">
+                    <div class="text-yellow-400 text-6xl mb-2">VS</div>
+                    <div class="text-2xl font-bold text-white/30">AI</div>
+                </div>
+                
+                <!-- AI Hand -->
+                <div class="flex flex-col items-center">
+                    <div id="ai-hand-toss" class="hand text-9xl mb-4">✊</div>
+                    <div class="text-red-400 font-bold text-xl">CPU</div>
+                </div>
+            </div>
+            
+            <div class="mb-8">
+                <p class="uppercase text-yellow-300 text-sm mb-3">Choose Odd or Even</p>
+                <div class="flex justify-center gap-8">
+                    <button onclick="selectTossSide('odd')" 
+                            id="odd-btn"
+                            class="toss-choice px-12 py-6 text-4xl font-bold rounded-3xl border-4 border-transparent hover:border-yellow-400 bg-black/70 hover:bg-yellow-900/60 flex-1 max-w-[220px]">
+                        ODD
+                    </button>
+                    <button onclick="selectTossSide('even')" 
+                            id="even-btn"
+                            class="toss-choice px-12 py-6 text-4xl font-bold rounded-3xl border-4 border-transparent hover:border-yellow-400 bg-black/70 hover:bg-yellow-900/60 flex-1 max-w-[220px]">
+                        EVEN
+                    </button>
+                </div>
+            </div>
+            
+            <button onclick="startTossThrow()" 
+                    id="toss-throw-btn"
+                    class="hidden mx-auto px-16 py-6 bg-gradient-to-r from-yellow-400 to-amber-400 text-black font-bold text-3xl rounded-3xl shadow-2xl shadow-yellow-400/60 hover:scale-105">
+                THROW THE HANDS!
+            </button>
+            
+            <div id="toss-result" class="hidden mt-8 text-2xl font-bold"></div>
+            
+            <button onclick="backToMenuFromToss()" class="mt-8 text-white/50 text-sm">CANCEL TOSS</button>
+        </div>
+
+        <!-- GAMEPLAY SCREEN -->
+        <div id="gameplay-screen" class="screen hidden w-full max-w-5xl mx-auto">
+            
+            <!-- SCOREBOARD -->
+            <div class="bg-black/80 backdrop-blur-lg rounded-3xl px-8 py-4 mb-6 flex items-center justify-between border border-yellow-400/30">
+                <div class="flex items-center gap-4">
+                    <div class="text-emerald-400 text-4xl">🏏</div>
+                    <div>
+                        <div id="player-score-name" class="font-bold text-xl"></div>
+                        <div id="player-score" class="text-5xl font-bold text-emerald-400">0</div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <div id="innings-status" class="uppercase text-xs tracking-[2px] bg-yellow-400 text-black px-4 py-1 rounded-3xl mb-1">1ST INNINGS</div>
+                    <div id="wickets" class="flex items-center gap-3 text-2xl">
+                        <!-- filled by JS -->
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4 text-right">
+                    <div>
+                        <div id="ai-score-name" class="font-bold text-xl text-red-400">CPU</div>
+                        <div id="ai-score" class="text-5xl font-bold text-red-400">0</div>
+                    </div>
+                    <div class="text-red-400 text-4xl">🤖</div>
+                </div>
+            </div>
+            
+            <!-- HANDS -->
+            <div class="flex justify-center gap-12 mb-8">
+                <div class="text-center">
+                    <div class="text-emerald-400 text-sm mb-2 font-bold">YOUR HAND</div>
+                    <div id="player-hand" class="text-8xl hand">✊</div>
+                    <div id="player-choice-display" class="mt-4 text-4xl font-bold text-transparent">00</div>
+                </div>
+                
+                <div class="flex flex-col justify-center text-yellow-300 text-6xl self-end mb-6">VS</div>
+                
+                <div class="text-center">
+                    <div class="text-red-400 text-sm mb-2 font-bold">CPU HAND</div>
+                    <div id="ai-hand" class="text-8xl hand">✊</div>
+                    <div id="ai-choice-display" class="mt-4 text-4xl font-bold text-transparent">00</div>
+                </div>
+            </div>
+            
+            <!-- STATUS -->
+            <div id="game-status" class="text-center text-2xl font-bold h-10 mb-4"></div>
+            
+            <!-- CHOICE BUTTONS -->
+            <div id="choice-panel" class="grid grid-cols-5 gap-4 max-w-2xl mx-auto">
+                <!-- Populated by JS -->
+            </div>
+            
+            <div class="flex justify-center gap-6 mt-8">
+                <button onclick="quitGame()" class="px-8 py-3 bg-white/10 hover:bg-white/20 text-white rounded-2xl text-sm font-bold flex items-center">
+                    <span class="mr-2">⏹️</span> QUIT MATCH
+                </button>
+            </div>
+        </div>
+
+        <!-- RESULT SCREEN -->
+        <div id="result-screen" class="screen hidden w-full max-w-xl mx-auto bg-black/80 backdrop-blur-3xl rounded-3xl p-8 text-center border-2 border-yellow-400">
+            <div id="result-emoji" class="text-8xl mb-4"></div>
+            <h2 id="result-title" class="text-6xl font-bold mb-2"></h2>
+            <p id="result-subtitle" class="text-yellow-300 text-2xl mb-8"></p>
+            
+            <div class="grid grid-cols-2 gap-6 mb-8">
+                <div class="bg-white/10 rounded-2xl p-6">
+                    <div class="text-sm text-white/60">YOUR SCORE</div>
+                    <div id="final-player-score" class="text-7xl font-bold text-emerald-400">0</div>
+                </div>
+                <div class="bg-white/10 rounded-2xl p-6">
+                    <div class="text-sm text-white/60">CPU SCORE</div>
+                    <div id="final-ai-score" class="text-7xl font-bold text-red-400">0</div>
+                </div>
+            </div>
+            
+            <div class="flex gap-4 justify-center">
+                <button onclick="playAgain()" 
+                        class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white text-2xl font-bold py-6 rounded-3xl">PLAY AGAIN</button>
+                <button onclick="backToMenu()" 
+                        class="flex-1 bg-white/10 hover:bg-white/20 text-white text-2xl font-bold py-6 rounded-3xl">MENU</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAME MODAL -->
+    <div onclick="if(event.target.id === 'name-modal') hideNameModal()" 
+         id="name-modal"
+         class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="bg-gradient-to-b from-emerald-950 to-black border border-yellow-400 rounded-3xl max-w-md w-full mx-4 p-8">
+            <h3 class="text-3xl font-bold mb-6 text-center">ENTER YOUR NAME</h3>
+            <input id="name-input" 
+                   type="text" 
+                   maxlength="12"
+                   class="w-full bg-white/10 border border-yellow-400/50 rounded-2xl px-6 py-6 text-3xl text-center focus:outline-none focus:border-yellow-400 mb-8">
+            <div class="flex gap-4">
+                <button onclick="hideNameModal()" 
+                        class="flex-1 py-5 text-white/70 font-bold text-xl">CANCEL</button>
+                <button onclick="savePlayerName()" 
+                        class="flex-1 py-5 bg-yellow-400 text-black font-bold text-xl rounded-2xl">SAVE NAME</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- THEME MODAL -->
+    <div onclick="if(event.target.id === 'theme-modal') hideThemeModal()" 
+         id="theme-modal"
+         class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="bg-gradient-to-b from-emerald-950 to-black border border-yellow-400 rounded-3xl max-w-md w-full mx-4 p-8">
+            <h3 class="text-3xl font-bold mb-6 text-center">CHOOSE YOUR ARENA</h3>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div onclick="applyTheme(0)" class="theme-option cursor-pointer bg-gradient-to-br from-emerald-700 to-green-900 p-4 rounded-2xl flex flex-col items-center border-2 border-transparent hover:border-yellow-400">
+                    <div class="text-6xl mb-2">🌿</div>
+                    <div class="font-bold">CLASSIC GREEN</div>
+                    <div class="text-xs text-white/60">Day stadium</div>
+                </div>
+                <div onclick="applyTheme(1)" class="theme-option cursor-pointer bg-gradient-to-br from-blue-900 to-indigo-950 p-4 rounded-2xl flex flex-col items-center border-2 border-transparent hover:border-yellow-400">
+                    <div class="text-6xl mb-2">🌃</div>
+                    <div class="font-bold">NIGHT MATCH</div>
+                    <div class="text-xs text-white/60">Floodlights on</div>
+                </div>
+                <div onclick="applyTheme(2)" class="theme-option cursor-pointer bg-gradient-to-br from-purple-800 to-pink-900 p-4 rounded-2xl flex flex-col items-center border-2 border-transparent hover:border-yellow-400">
+                    <div class="text-6xl mb-2">🌈</div>
+                    <div class="font-bold">NEON CRICKET</div>
+                    <div class="text-xs text-white/60">Cyber pitch</div>
+                </div>
+                <div onclick="applyTheme(3)" class="theme-option cursor-pointer bg-gradient-to-br from-amber-800 to-orange-900 p-4 rounded-2xl flex flex-col items-center border-2 border-transparent hover:border-yellow-400">
+                    <div class="text-6xl mb-2">🏜️</div>
+                    <div class="font-bold">DESERT DREAM</div>
+                    <div class="text-xs text-white/60">Golden sands</div>
+                </div>
+            </div>
+            
+            <button onclick="hideThemeModal()" class="mt-8 w-full py-4 bg-white/10 hover:bg-white/20 rounded-3xl text-lg font-bold">DONE</button>
+        </div>
+    </div>
+
+    <!-- LEADERBOARD MODAL -->
+    <div onclick="if(event.target.id === 'leaderboard-modal') hideLeaderboard()" 
+         id="leaderboard-modal"
+         class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="bg-gradient-to-b from-emerald-950 to-black border border-yellow-400 rounded-3xl max-w-lg w-full mx-4 p-8">
+            <div class="flex justify-between items-baseline mb-6">
+                <h3 class="text-4xl font-bold">🏆 LEADERBOARD</h3>
+                <div id="lb-player-name" class="text-yellow-400 text-2xl"></div>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="flex justify-between items-center">
+                    <div class="text-xl">MATCHES PLAYED</div>
+                    <div id="lb-played" class="text-5xl font-bold text-white">0</div>
+                </div>
+                <div class="h-px bg-white/20"></div>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <span class="text-emerald-400 text-4xl">✅</span>
+                        <div class="text-xl">WINS</div>
+                    </div>
+                    <div id="lb-wins" class="text-5xl font-bold text-emerald-400">0</div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <span class="text-red-400 text-4xl">❌</span>
+                        <div class="text-xl">LOSSES</div>
+                    </div>
+                    <div id="lb-losses" class="text-5xl font-bold text-red-400">0</div>
+                </div>
+                <div class="h-px bg-white/20"></div>
+                <div class="flex justify-between items-center">
+                    <div>HIGHEST SCORE</div>
+                    <div id="lb-high" class="text-5xl font-bold text-yellow-400">0</div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <div>LOWEST SCORE</div>
+                    <div id="lb-low" class="text-5xl font-bold text-yellow-400">0</div>
+                </div>
+            </div>
+            
+            <button onclick="hideLeaderboard()" 
+                    class="mt-10 w-full py-5 bg-yellow-400 text-black font-bold text-xl rounded-3xl">BACK TO MENU</button>
+        </div>
+    </div>
+
+    <script>
+        // Tailwind script initialization
+        function initTailwind() {
+            // No config needed, using default + custom classes
+            return true
+        }
+        
+        // Global variables
+        let playerName = "Ojas"
+        let currentThemeIndex = 0
+        let stats = {
+            played: 0,
+            won: 0,
+            lost: 0,
+            highScore: 0,
+            lowScore: Infinity
+        }
+        
+        // Game variables
+        let difficulty = "easy"
+        let playerScore = 0
+        let aiScore = 0
+        let playerWickets = 0
+        let aiWickets = 0
+        let currentInnings = 1 // 1 = player batting first, 2 = ai batting
+        let isPlayerBatting = true
+        let gameFinished = false
+        let tossChoice = null // 'odd' or 'even'
+        let userTossNumber = null
+        let aiTossNumber = null
+        let runOptions = [2, 4, 10, 15, 20]
+        
+        // Load saved data
+        function loadSavedData() {
+            const savedName = localStorage.getItem("handCricket_playerName")
+            if (savedName) playerName = savedName
+            
+            const savedTheme = localStorage.getItem("handCricket_theme")
+            if (savedTheme !== null) currentThemeIndex = parseInt(savedTheme)
+            
+            const savedStats = localStorage.getItem("handCricket_stats")
+            if (savedStats) stats = JSON.parse(savedStats)
+            
+            // Update displays
+            document.getElementById("player-name-display").textContent = playerName
+            document.getElementById("current-player-name-small").textContent = playerName
+            document.getElementById("lb-player-name").textContent = playerName
+            
+            // Menu stats preview
+            document.getElementById("menu-wins").textContent = stats.won
+            document.getElementById("menu-losses").textContent = stats.lost
+            document.getElementById("menu-high").textContent = stats.highScore || 0
+        }
+        
+        // Save data
+        function saveData() {
+            localStorage.setItem("handCricket_playerName", playerName)
+            localStorage.setItem("handCricket_theme", currentThemeIndex)
+            localStorage.setItem("handCricket_stats", JSON.stringify(stats))
+        }
+        
+        // Apply theme
+        function applyTheme(index) {
+            currentThemeIndex = index
+            const body = document.body
+            
+            // Reset all
+            body.classList.remove("game-bg")
+            
+            if (index === 0) {
+                // Classic Green
+                body.style.background = "linear-gradient(180deg, #0a3d0a 0%, #001a00 100%)"
+                document.getElementById("theme-icon").innerHTML = "🌿"
+                document.getElementById("game-title").style.textShadow = "0 0 20px #ffd700, 0 0 40px #ffd700, 0 0 60px #00c853"
+            } else if (index === 1) {
+                // Night Match
+                body.style.background = "linear-gradient(180deg, #0a0a2e 0%, #000011 100%)"
+                document.getElementById("theme-icon").innerHTML = "🌃"
+                document.getElementById("game-title").style.textShadow = "0 0 20px #00ddff, 0 0 40px #00ddff"
+            } else if (index === 2) {
+                // Neon
+                body.style.background = "linear-gradient(180deg, #2a0066 0%, #110033 100%)"
+                document.getElementById("theme-icon").innerHTML = "🌈"
+                document.getElementById("game-title").style.textShadow = "0 0 20px #ff00ff, 0 0 40px #00ffff"
+            } else if (index === 3) {
+                // Desert
+                body.style.background = "linear-gradient(180deg, #8c4a00 0%, #3d2000 100%)"
+                document.getElementById("theme-icon").innerHTML = "🏜️"
+                document.getElementById("game-title").style.textShadow = "0 0 20px #ffdd00, 0 0 40px #ff8800"
+            }
+            
+            saveData()
+            hideThemeModal()
+        }
+        
+        // Show / hide modals
+        function showNameModal() {
+            document.getElementById("name-modal").classList.remove("hidden")
+            document.getElementById("name-input").value = playerName
+            document.getElementById("name-input").focus()
+        }
+        
+        function hideNameModal() {
+            document.getElementById("name-modal").classList.add("hidden")
+        }
+        
+        function savePlayerName() {
+            const input = document.getElementById("name-input").value.trim()
+            if (input) {
+                playerName = input
+                document.getElementById("player-name-display").textContent = playerName
+                document.getElementById("current-player-name-small").textContent = playerName
+                document.getElementById("lb-player-name").textContent = playerName
+                saveData()
+            }
+            hideNameModal()
+        }
+        
+        function showThemeModal() {
+            document.getElementById("theme-modal").classList.remove("hidden")
+        }
+        
+        function hideThemeModal() {
+            document.getElementById("theme-modal").classList.add("hidden")
+        }
+        
+        function showLeaderboard() {
+            // Update leaderboard values
+            document.getElementById("lb-played").textContent = stats.played
+            document.getElementById("lb-wins").textContent = stats.won
+            document.getElementById("lb-losses").textContent = stats.lost
+            document.getElementById("lb-high").textContent = stats.highScore || 0
+            document.getElementById("lb-low").textContent = stats.lowScore === Infinity ? "0" : stats.lowScore
+            document.getElementById("leaderboard-modal").classList.remove("hidden")
+        }
+        
+        function hideLeaderboard() {
+            document.getElementById("leaderboard-modal").classList.add("hidden")
+        }
+        
+        // Back to menu
+        function backToMenu() {
+            hideAllScreens()
+            document.getElementById("menu-screen").classList.remove("hidden")
+        }
+        
+        function backToMenuFromToss() {
+            hideAllScreens()
+            document.getElementById("menu-screen").classList.remove("hidden")
+            resetGameState()
+        }
+        
+        function hideAllScreens() {
+            document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"))
+        }
+        
+        // Show levels
+        function showLevels() {
+            hideAllScreens()
+            document.getElementById("levels-screen").classList.remove("hidden")
+        }
+        
+        // Start the game with chosen difficulty
+        function startGame(level) {
+            difficulty = level
+            hideAllScreens()
+            resetGameState()
+            document.getElementById("toss-screen").classList.remove("hidden")
+            
+            // Reset toss UI
+            document.getElementById("player-hand-toss").textContent = "✊"
+            document.getElementById("ai-hand-toss").textContent = "✊"
+            document.getElementById("toss-throw-btn").classList.add("hidden")
+            document.getElementById("toss-result").classList.add("hidden")
+            document.getElementById("odd-btn").classList.remove("border-yellow-400", "bg-yellow-900/60")
+            document.getElementById("even-btn").classList.remove("border-yellow-400", "bg-yellow-900/60")
+            tossChoice = null
+            
+            document.getElementById("player-toss-name").textContent = playerName
+        }
+        
+        // Select odd/even
+        function selectTossSide(side) {
+            tossChoice = side
+            const oddBtn = document.getElementById("odd-btn")
+            const evenBtn = document.getElementById("even-btn")
+            
+            oddBtn.classList.toggle("border-yellow-400", side === "odd")
+            oddBtn.classList.toggle("bg-yellow-900/60", side === "odd")
+            evenBtn.classList.toggle("border-yellow-400", side === "even")
+            evenBtn.classList.toggle("bg-yellow-900/60", side === "even")
+            
+            // Show throw button
+            document.getElementById("toss-throw-btn").classList.remove("hidden")
+        }
+        
+        // Throw for toss
+        function startTossThrow() {
+            if (!tossChoice) return
+            
+            // Player picks a number
+            userTossNumber = runOptions[Math.floor(Math.random() * runOptions.length)]
+            
+            // AI picks
+            aiTossNumber = runOptions[Math.floor(Math.random() * runOptions.length)]
+            
+            // Animate hands
+            const playerHand = document.getElementById("player-hand-toss")
+            const aiHand = document.getElementById("ai-hand-toss")
+            
+            playerHand.style.animation = "none"
+            aiHand.style.animation = "none"
+            
+            // Reveal after short delay
+            setTimeout(() => {
+                playerHand.classList.add("reveal")
+                aiHand.classList.add("reveal")
+                playerHand.textContent = userTossNumber
+                aiHand.textContent = aiTossNumber
+                
+                // Calculate result
+                const sum = userTossNumber + aiTossNumber
+                const isEvenSum = sum % 2 === 0
+                const userWonToss = (tossChoice === "even" && isEvenSum) || (tossChoice === "odd" && !isEvenSum)
+                
+                // Show result
+                const resultEl = document.getElementById("toss-result")
+                resultEl.classList.remove("hidden")
+                
+                if (userWonToss) {
+                    resultEl.innerHTML = `
+                        <span class="text-emerald-400">🎉 YOU WON THE TOSS!</span><br>
+                        <span class="text-xl text-white/80 mt-4 block">Choose to BAT or BOWL</span>
+                        <div class="flex justify-center gap-8 mt-6">
+                            <button onclick="chooseBatBowl(true)" class="px-10 py-4 bg-emerald-500 hover:bg-emerald-600 text-xl font-bold rounded-3xl">BAT FIRST</button>
+                            <button onclick="chooseBatBowl(false)" class="px-10 py-4 bg-red-500 hover:bg-red-600 text-xl font-bold rounded-3xl">BOWL FIRST</button>
+                        </div>
+                    `
+                } else {
+                    // AI wins toss
+                    const aiChoosesBat = Math.random() > 0.5
+                    resultEl.innerHTML = `
+                        <span class="text-red-400">CPU WON THE TOSS!</span><br>
+                        <span class="text-xl text-white/80 mt-4 block">CPU elected to ${aiChoosesBat ? "BAT" : "BOWL"} first</span>
+                    `
+                    setTimeout(() => {
+                        isPlayerBatting = !aiChoosesBat
+                        startInnings()
+                    }, 1800)
+                }
+            }, 600)
+        }
+        
+        // User chooses bat or bowl after winning toss
+        function chooseBatBowl(bat) {
+            isPlayerBatting = bat
+            startInnings()
+        }
+        
+        // Begin the actual match
+        function startInnings() {
+            hideAllScreens()
+            document.getElementById("gameplay-screen").classList.remove("hidden")
+            
+            playerScore = 0
+            aiScore = 0
+            playerWickets = 0
+            aiWickets = 0
+            currentInnings = 1
+            gameFinished = false
+            
+            updateScoreboard()
+            renderChoiceButtons()
+            
+            // Show status
+            const statusEl = document.getElementById("game-status")
+            statusEl.innerHTML = isPlayerBatting 
+                ? `<span class="text-emerald-400">YOU ARE BATTING</span>` 
+                : `<span class="text-red-400">YOU ARE BOWLING • AI IS BATTING</span>`
+            
+            // Reset hands
+            document.getElementById("player-hand").textContent = "✊"
+            document.getElementById("ai-hand").textContent = "✊"
+            document.getElementById("player-choice-display").classList.add("text-transparent")
+            document.getElementById("ai-choice-display").classList.add("text-transparent")
+        }
+        
+        function updateScoreboard() {
+            document.getElementById("player-score-name").textContent = playerName
+            document.getElementById("player-score").textContent = playerScore
+            document.getElementById("ai-score").textContent = aiScore
+            
+            // Wickets display
+            const wicketsEl = document.getElementById("wickets")
+            wicketsEl.innerHTML = `
+                <span class="text-emerald-400">YOU ${playerWickets}/1</span>
+                <span class="mx-3 text-white/30">•</span>
+                <span class="text-red-400">CPU ${aiWickets}/1</span>
+            `
+            
+            const statusEl = document.getElementById("innings-status")
+            if (currentInnings === 1) {
+                statusEl.textContent = isPlayerBatting ? "YOUR INNINGS" : "CPU INNINGS"
+            } else {
+                statusEl.textContent = "2ND INNINGS"
+            }
+        }
+        
+        // Render the 5 run choice buttons
+        function renderChoiceButtons() {
+            const panel = document.getElementById("choice-panel")
+            panel.innerHTML = ""
+            
+            runOptions.forEach((runs) => {
+                const btn = document.createElement("button")
+                btn.className = `button-hover flex flex-col items-center justify-center bg-gradient-to-br from-yellow-400 to-amber-400 hover:from-yellow-300 hover:to-amber-300 text-black rounded-3xl py-6 text-3xl font-bold shadow-xl`
+                btn.innerHTML = `
+                    <div class="text-5xl mb-1">🏏</div>
+                    <div>${runs}</div>
+                    <div class="text-xs text-black/70 tracking-widest">RUNS</div>
+                `
+                btn.onclick = () => handlePlayerChoice(runs)
+                panel.appendChild(btn)
+            })
+        }
+        
+        // Player makes a choice
+        function handlePlayerChoice(userChoice) {
+            if (gameFinished) return
+            
+            // Show player hand immediately
+            const playerHandEl = document.getElementById("player-hand")
+            const playerDisplay = document.getElementById("player-choice-display")
+            
+            playerHandEl.classList.remove("reveal")
+            playerHandEl.textContent = "✊"
+            playerDisplay.classList.remove("text-transparent")
+            playerDisplay.textContent = userChoice
+            playerDisplay.style.color = "#10b981"
+            
+            // Decide AI choice
+            let aiChoice
+            
+            if (isPlayerBatting) {
+                // AI is bowling → higher chance to match on harder levels
+                const matchChance = difficulty === "easy" ? 0.15 : (difficulty === "medium" ? 0.35 : 0.60)
+                if (Math.random() < matchChance) {
+                    aiChoice = userChoice
+                } else {
+                    aiChoice = runOptions[Math.floor(Math.random() * runOptions.length)]
+                }
+            } else {
+                // AI is batting → AI chooses randomly (player tries to match)
+                // On hard, AI tries to avoid predictable patterns but still random
+                aiChoice = runOptions[Math.floor(Math.random() * runOptions.length)]
+            }
+            
+            // Reveal AI
+            setTimeout(() => {
+                const aiHandEl = document.getElementById("ai-hand")
+                const aiDisplay = document.getElementById("ai-choice-display")
+                
+                aiHandEl.classList.add("reveal")
+                aiHandEl.textContent = aiChoice
+                aiDisplay.classList.remove("text-transparent")
+                aiDisplay.textContent = aiChoice
+                aiDisplay.style.color = "#ef4444"
+                
+                // Resolve the ball
+                resolveBall(userChoice, aiChoice)
+            }, 420)
+        }
+        
+        function resolveBall(playerNum, aiNum) {
+            const statusEl = document.getElementById("game-status")
+            
+            if (playerNum === aiNum) {
+                // OUT!
+                statusEl.innerHTML = `<span class="out-text text-red-500 text-4xl">OUT! 🏏</span>`
+                
+                if (isPlayerBatting) {
+                    playerWickets++
+                } else {
+                    aiWickets++
+                }
+                
+                updateScoreboard()
+                
+                // Check if innings over
+                if ((isPlayerBatting && playerWickets >= 1) || (!isPlayerBatting && aiWickets >= 1)) {
+                    currentInnings++
+                    if (currentInnings > 2) {
+                        endMatch()
+                        return
+                    }
+                    
+                    // Switch innings
+                    isPlayerBatting = !isPlayerBatting
+                    
+                    setTimeout(() => {
+                        statusEl.innerHTML = isPlayerBatting 
+                            ? `<span class="text-emerald-400">YOUR INNINGS STARTS!</span>` 
+                            : `<span class="text-red-400">CPU INNINGS STARTS!</span>`
+                        
+                        // Reset hands
+                        resetHands()
+                        updateScoreboard()
+                    }, 1500)
+                    return
+                }
+            } else {
+                // Runs scored by batsman
+                const runsScored = isPlayerBatting ? playerNum : aiNum
+                if (isPlayerBatting) {
+                    playerScore += runsScored
+                } else {
+                    aiScore += runsScored
+                }
+                
+                statusEl.innerHTML = `<span class="score-pop text-emerald-400">+${runsScored} RUNS 🔥</span>`
+                updateScoreboard()
+                
+                // Confetti effect
+                if (runsScored >= 10) createSimpleConfetti()
+            }
+            
+            // Reset for next ball after delay
+            setTimeout(() => {
+                resetHands()
+                if (!gameFinished) {
+                    statusEl.textContent = ""
+                }
+            }, 1600)
+        }
+        
+        function resetHands() {
+            document.getElementById("player-hand").textContent = "✊"
+            document.getElementById("ai-hand").textContent = "✊"
+            document.getElementById("player-choice-display").classList.add("text-transparent")
+            document.getElementById("ai-choice-display").classList.add("text-transparent")
+        }
+        
+        function endMatch() {
+            gameFinished = true
+            
+            // Update stats
+            stats.played++
+            const playerWon = playerScore > aiScore
+            const tie = playerScore === aiScore
+            
+            if (playerWon) stats.won++
+            else if (!tie) stats.lost++
+            
+            if (playerScore > stats.highScore) stats.highScore = playerScore
+            if (playerScore < stats.lowScore || stats.lowScore === Infinity) stats.lowScore = playerScore
+            
+            saveData()
+            
+            // Show result screen
+            hideAllScreens()
+            const resultScreen = document.getElementById("result-screen")
+            resultScreen.classList.remove("hidden")
+            
+            document.getElementById("final-player-score").textContent = playerScore
+            document.getElementById("final-ai-score").textContent = aiScore
+            
+            const emojiEl = document.getElementById("result-emoji")
+            const titleEl = document.getElementById("result-title")
+            const subEl = document.getElementById("result-subtitle")
+            
+            if (tie) {
+                emojiEl.textContent = "🤝"
+                titleEl.textContent = "IT'S A TIE!"
+                titleEl.style.color = "#eab308"
+                subEl.textContent = "Both teams played amazingly!"
+            } else if (playerWon) {
+                emojiEl.textContent = "🏆"
+                titleEl.innerHTML = `VICTORY<br><span class="text-emerald-400">${playerName}</span>`
+                subEl.textContent = "You crushed the CPU!"
+            } else {
+                emojiEl.textContent = "🤖"
+                titleEl.innerHTML = `DEFEAT<br><span class="text-red-400">CPU WINS</span>`
+                subEl.textContent = "Better luck next match!"
+            }
+        }
+        
+        function playAgain() {
+            hideAllScreens()
+            startGame(difficulty) // keep same difficulty
+        }
+        
+        function quitGame() {
+            if (confirm("Quit the match? Progress will be lost.")) {
+                hideAllScreens()
+                document.getElementById("menu-screen").classList.remove("hidden")
+                resetGameState()
+            }
+        }
+        
+        function resetGameState() {
+            playerScore = 0
+            aiScore = 0
+            playerWickets = 0
+            aiWickets = 0
+            gameFinished = false
+        }
+        
+        // Simple confetti
+        function createSimpleConfetti() {
+            for (let i = 0; i < 60; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement("div")
+                    confetti.textContent = ["🏏", "🔥", "✨"][Math.floor(Math.random() * 3)]
+                    confetti.style.position = "fixed"
+                    confetti.style.left = Math.random() * 100 + "vw"
+                    confetti.style.top = "-20px"
+                    confetti.style.fontSize = "20px"
+                    confetti.style.zIndex = "9999"
+                    confetti.style.transform = `rotate(${Math.random() * 360}deg)`
+                    document.body.appendChild(confetti)
+                    
+                    const fallTime = Math.random() * 2800 + 1800
+                    confetti.animate([
+                        { transform: `translateY(0) rotate(0deg)` },
+                        { transform: `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 800}deg)` }
+                    ], {
+                        duration: fallTime,
+                        easing: "cubic-bezier(0.25, 0.1, 0.25, 1)"
+                    })
+                    
+                    setTimeout(() => confetti.remove(), fallTime)
+                }, i * 3)
+            }
+        }
+        
+        // Main boot
+        function initializeGame() {
+            initTailwind()
+            loadSavedData()
+            
+            console.log("%c🎉 Hand Cricket loaded! Have an awesome match with your friends!", "color:#00c853; font-size:13px; font-weight:bold")
+            
+            // Keyboard shortcut fun (press T for toss demo)
+            document.addEventListener('keydown', function(e) {
+                if (e.key === "t" || e.key === "T") {
+                    if (document.getElementById("menu-screen").classList.contains("hidden") === false) {
+                        showLevels()
+                    }
+                }
+            })
+        }
+        
+        // Boot the game
+        window.onload = initializeGame
+    </script>
+</body>
+</html>
