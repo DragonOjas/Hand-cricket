@@ -12,6 +12,39 @@ body{font-family:'Exo 2',sans-serif;color:#fff;min-height:100vh;overflow-x:hidde
 #bgCanvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 #scene-layer{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 
+/* global cinematic depth */
+.scene-vignette{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 42%,rgba(0,0,0,.28) 100%);mix-blend-mode:normal;opacity:.45;transition:all 1s}
+.scene-grain{position:absolute;inset:-30%;pointer-events:none;opacity:.05;background-image:radial-gradient(rgba(255,255,255,.6) .5px,transparent .5px);background-size:3px 3px;animation:grainShift 10s steps(8) infinite}
+@keyframes grainShift{0%{transform:translate(0,0)}25%{transform:translate(1%,1.2%)}50%{transform:translate(-1.2%,.6%)}75%{transform:translate(.8%,-1%)}100%{transform:translate(0,0)}}
+.parallax-glow{position:absolute;inset:-8%;pointer-events:none;opacity:0;transition:opacity 1s}
+.pg1,.pg2,.pg3{position:absolute;border-radius:50%;filter:blur(80px);animation:pgFloat 15s ease-in-out infinite}
+.pg1{width:380px;height:380px;left:-6%;top:5%;background:radial-gradient(circle,rgba(0,245,255,.08),transparent 72%)}
+.pg2{width:300px;height:300px;right:3%;top:22%;background:radial-gradient(circle,rgba(255,0,160,.06),transparent 72%);animation-delay:-4s}
+.pg3{width:420px;height:420px;left:24%;bottom:-14%;background:radial-gradient(circle,rgba(0,255,157,.06),transparent 70%);animation-delay:-8s}
+@keyframes pgFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,-18px) scale(1.05)}}
+
+/* spotlight + cinematic overlays */
+#cinematic-layer{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .9s}
+.cbeam{position:absolute;top:-18%;width:26vw;min-width:180px;height:140%;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0));filter:blur(4px);transform:rotate(15deg);opacity:.08;animation:beamSweep 12s ease-in-out infinite}
+.cbeam.b2{right:8%;transform:rotate(-14deg);animation-delay:-4s}
+.cbeam.b1{left:8%}
+@keyframes beamSweep{0%,100%{opacity:.03;transform:translateX(0) rotate(15deg)}50%{opacity:.11;transform:translateX(18px) rotate(11deg)}}
+
+/* theme-specific foreground effects */
+.theme-fx-layer{position:absolute;inset:0;opacity:0;transition:opacity .9s;pointer-events:none}
+#ocean-foam{position:absolute;left:-4%;right:-4%;bottom:55px;height:65px;opacity:0;background:radial-gradient(ellipse at 20% 70%,rgba(255,255,255,.2),transparent 55%),radial-gradient(ellipse at 65% 60%,rgba(255,255,255,.13),transparent 55%),radial-gradient(ellipse at 85% 30%,rgba(255,255,255,.14),transparent 50%);animation:foamDrift 8s ease-in-out infinite}
+@keyframes foamDrift{0%,100%{transform:translateX(0)}50%{transform:translateX(-2.5%)}}
+#forest-fireflies .fly{position:absolute;width:6px;height:6px;border-radius:50%;background:#aaff66;box-shadow:0 0 5px rgba(170,255,102,.45);animation:fireFly linear infinite}
+@keyframes fireFly{0%{transform:translate(0,0) scale(.4);opacity:0}12%{opacity:.9}60%{opacity:.65}100%{transform:translate(40px,-80px) scale(1);opacity:0}}
+#neon-pulse{position:absolute;inset:0;opacity:0;background:radial-gradient(circle at 30% 20%,rgba(255,0,255,.06),transparent 45%),radial-gradient(circle at 74% 70%,rgba(0,255,255,.05),transparent 50%);animation:neonPulse 7s ease-in-out infinite}
+@keyframes neonPulse{0%,100%{opacity:.1}50%{opacity:.24}}
+#desert-heat{position:absolute;inset:0;opacity:0;background:linear-gradient(180deg,transparent 55%,rgba(255,170,40,.06));filter:blur(1px);animation:heatWobble 5s ease-in-out infinite}
+@keyframes heatWobble{0%,100%{transform:translateX(0) skewX(0)}50%{transform:translateX(3px) skewX(.6deg)}}
+#volcano-smoke .sm{position:absolute;bottom:10px;width:20px;height:20px;border-radius:50%;background:radial-gradient(circle,rgba(90,90,90,.35),transparent 70%);animation:smokeRise linear infinite}
+@keyframes smokeRise{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.5}100%{transform:translateY(-180px) translateX(30px) scale(2.1);opacity:0}}
+#galaxy-ring{position:absolute;left:50%;top:50%;width:70vmax;height:70vmax;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(170,136,255,.14);opacity:0;animation:spinSlow 26s linear infinite}
+@keyframes spinSlow{to{transform:translate(-50%,-50%) rotate(360deg)}}
+
 /* ── SCENE ELEMENTS ── */
 /* ocean */
 .wave{position:absolute;bottom:0;left:-10%;width:120%;border-radius:50% 50% 0 0;opacity:0;transition:opacity 1s}
@@ -85,7 +118,7 @@ body{font-family:'Exo 2',sans-serif;color:#fff;min-height:100vh;overflow-x:hidde
 header{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:rgba(0,0,0,.6);backdrop-filter:blur(24px);border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:100;gap:5px;flex-wrap:wrap}
 .hdr-l{display:flex;align-items:center;gap:8px;flex-shrink:0}
 .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--p),var(--s));display:flex;align-items:center;justify-content:center;font-size:17px;animation:logoBeat 3s ease infinite;flex-shrink:0}
-@keyframes logoBeat{0%,100%{box-shadow:0 0 12px var(--p)}50%{box-shadow:0 0 28px var(--p),0 0 52px var(--s)}}
+@keyframes logoBeat{0%,100%{box-shadow:0 3px 10px rgba(0,0,0,.25)}50%{box-shadow:0 5px 16px rgba(0,0,0,.32)}}
 .gtitle{font-family:'Orbitron',sans-serif;font-size:clamp(9px,2vw,17px);font-weight:900;letter-spacing:4px;background:linear-gradient(90deg,var(--p),var(--s));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap}
 .hdr-r{display:flex;align-items:center;gap:4px;flex-wrap:nowrap}
 .coin-hdr{display:flex;align-items:center;gap:3px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.35);border-radius:16px;padding:4px 9px;cursor:pointer;transition:all .25s;white-space:nowrap}
@@ -112,6 +145,8 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 @keyframes pdot{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(0,245,255,.7)}50%{transform:scale(1.4);box-shadow:0 0 0 6px rgba(0,245,255,0)}}
 .mtitle{font-family:'Orbitron',sans-serif;font-size:clamp(24px,6.5vw,48px);font-weight:900;background:linear-gradient(135deg,var(--p) 0%,var(--s) 50%,var(--p) 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gshift 3s linear infinite;line-height:1.1;margin-bottom:4px}
 @keyframes gshift{0%{background-position:0% center}100%{background-position:200% center}}
+.menu-hero{animation:heroFloat 6s ease-in-out infinite}
+@keyframes heroFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 .msub{color:rgba(255,255,255,.42);font-size:clamp(9px,1.8vw,13px);letter-spacing:2px}
 .theme-tagline{margin-top:6px;font-size:clamp(8px,1.4vw,11px);letter-spacing:3px;color:var(--p);opacity:.6;font-style:italic;min-height:14px;transition:all .5s}
 .mbtns{width:100%;display:flex;flex-direction:column;gap:7px}
@@ -120,16 +155,25 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 .mbtn:hover::before{left:100%}
 .mbtn:hover{transform:translateY(-2px) scale(1.02);border-color:rgba(255,255,255,.32)}.mbtn:active{transform:scale(.97)}
 .mbtn .bi{font-size:clamp(17px,3.2vw,26px);flex-shrink:0}.mbtn .ba{margin-left:auto;opacity:.4;font-size:13px}
-.bp{background:linear-gradient(135deg,#0055ee,#00aaff);box-shadow:0 5px 20px rgba(0,80,220,.45)}
-.bshop{background:linear-gradient(135deg,#996600,#ffcc00);box-shadow:0 5px 20px rgba(180,120,0,.45)}
-.bt{background:linear-gradient(135deg,#006633,#00dd77);box-shadow:0 5px 20px rgba(0,150,80,.4)}
-.bn{background:linear-gradient(135deg,#cc6600,#ffcc00);box-shadow:0 5px 20px rgba(200,110,0,.4)}
-.bl{background:linear-gradient(135deg,#7700cc,#bb44ff);box-shadow:0 5px 20px rgba(130,0,220,.4)}
+#menu-screen.active .mbtn{animation:menuBtnIn .55s cubic-bezier(.22,1,.36,1) both}
+#menu-screen.active .mbtn:nth-child(1){animation-delay:.03s}
+#menu-screen.active .mbtn:nth-child(2){animation-delay:.1s}
+#menu-screen.active .mbtn:nth-child(3){animation-delay:.17s}
+#menu-screen.active .mbtn:nth-child(4){animation-delay:.24s}
+#menu-screen.active .mbtn:nth-child(5){animation-delay:.31s}
+@keyframes menuBtnIn{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+.bp{background:linear-gradient(135deg,#0b4cc5,#1f7de1);box-shadow:0 6px 14px rgba(0,0,0,.28)}
+.bshop{background:linear-gradient(135deg,#8f6c1a,#cda437);box-shadow:0 6px 14px rgba(0,0,0,.28)}
+.bt{background:linear-gradient(135deg,#1f7b57,#22a772);box-shadow:0 6px 14px rgba(0,0,0,.28)}
+.bn{background:linear-gradient(135deg,#b36b2b,#d18b3d);box-shadow:0 6px 14px rgba(0,0,0,.28)}
+.bl{background:linear-gradient(135deg,#6443b7,#8b63d8);box-shadow:0 6px 14px rgba(0,0,0,.28)}
 
 /* ── PLAY GAME SCREEN (upgraded) ── */
 #play-screen{max-width:680px;width:100%}
 .play-header{text-align:center;margin-bottom:18px}
 .play-title{font-family:'Orbitron',sans-serif;font-size:clamp(18px,4.5vw,28px);font-weight:900;color:var(--p);letter-spacing:3px;margin-bottom:4px}
+.play-title{animation:titleDrift 4s ease-in-out infinite}
+@keyframes titleDrift{0%,100%{letter-spacing:3px}50%{letter-spacing:4px}}
 .play-sub{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:2px}
 /* difficulty cards */
 .diff-grid{width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
@@ -137,9 +181,9 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 .diff-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,.04));pointer-events:none}
 .diff-card:hover{transform:translateY(-4px) scale(1.03)}
 .diff-card.selected{transform:scale(1.06)}
-.dc-easy{border-color:#00ffaa}.dc-easy.selected{background:rgba(0,255,170,.12);box-shadow:0 0 30px rgba(0,255,170,.35)}
-.dc-med{border-color:#ffcc00}.dc-med.selected{background:rgba(255,204,0,.12);box-shadow:0 0 30px rgba(255,204,0,.35)}
-.dc-hard{border-color:#ff4444}.dc-hard.selected{background:rgba(255,68,68,.12);box-shadow:0 0 30px rgba(255,68,68,.35)}
+.dc-easy{border-color:#00ffaa}.dc-easy.selected{background:rgba(0,255,170,.12);box-shadow:0 6px 16px rgba(0,0,0,.24)}
+.dc-med{border-color:#ffcc00}.dc-med.selected{background:rgba(255,204,0,.12);box-shadow:0 6px 16px rgba(0,0,0,.24)}
+.dc-hard{border-color:#ff4444}.dc-hard.selected{background:rgba(255,68,68,.12);box-shadow:0 6px 16px rgba(0,0,0,.24)}
 .dc-emoji{font-size:clamp(28px,5vw,42px);display:block;margin-bottom:8px}
 .dc-name{font-family:'Orbitron',sans-serif;font-size:clamp(11px,2.5vw,16px);font-weight:900;margin-bottom:4px}
 .dc-desc{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:1px;line-height:1.4;margin-bottom:8px}
@@ -155,6 +199,15 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 .sc-icon{font-size:22px;display:block;margin-bottom:4px}
 .sc-name{font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;color:var(--p);letter-spacing:1px;margin-bottom:2px}
 .sc-desc{font-size:7px;color:rgba(255,255,255,.35);letter-spacing:.5px}
+/* match settings */
+.match-settings{width:100%;margin-bottom:16px}
+.ms-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ms-group{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:8px}
+.ms-title{font-size:8px;color:rgba(255,255,255,.4);letter-spacing:2px;text-align:center;margin-bottom:7px;font-family:'Orbitron',sans-serif}
+.ms-options{display:flex;gap:6px;justify-content:center}
+.ms-opt{flex:1;padding:7px 4px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:rgba(0,0,0,.3);color:#fff;font-family:'Orbitron',sans-serif;font-size:9px;cursor:pointer;transition:all .25s}
+.ms-opt.selected{border-color:var(--p);background:rgba(0,245,255,.09);color:var(--p)}
+.format-chip{margin-top:8px;text-align:center;font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:2px;color:rgba(255,255,255,.55)}
 /* active powerups preview */
 .active-pu-section{width:100%;margin-bottom:16px}
 .apu-label{font-size:8px;color:rgba(255,255,255,.35);letter-spacing:3px;text-align:center;margin-bottom:7px;font-family:'Orbitron',sans-serif}
@@ -164,7 +217,7 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 .start-game-btn{width:100%;padding:15px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--p),var(--s));color:#000;font-family:'Orbitron',sans-serif;font-size:clamp(12px,2.5vw,16px);font-weight:900;cursor:pointer;letter-spacing:3px;transition:all .35s;position:relative;overflow:hidden}
 .start-game-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transition:left .5s}
 .start-game-btn:hover::before{left:100%}
-.start-game-btn:hover{transform:scale(1.03) translateY(-2px);box-shadow:0 8px 30px rgba(0,245,255,.5)}
+.start-game-btn:hover{transform:scale(1.02) translateY(-2px);box-shadow:0 8px 16px rgba(0,0,0,.35)}
 .start-game-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
 
 /* ── LEVELS (legacy - kept for compatibility) ── */
@@ -183,9 +236,9 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 .vsdiv{font-family:'Orbitron',sans-serif;font-size:clamp(15px,3.5vw,28px);color:#ffcc00;font-weight:900;flex-shrink:0}
 .tosschoices{display:flex;gap:8px;width:100%;max-width:320px;margin-bottom:12px}
 .tossbtn{flex:1;padding:11px;border-radius:11px;border:2px solid rgba(255,255,255,.18);background:rgba(0,0,0,.45);color:#fff;font-family:'Orbitron',sans-serif;font-size:clamp(11px,2.3vw,16px);font-weight:700;cursor:pointer;transition:all .28s;letter-spacing:2px}
-.tossbtn:hover,.tossbtn.sel{border-color:var(--p);background:rgba(0,245,255,.12);box-shadow:0 0 14px rgba(0,245,255,.35);transform:scale(1.05)}
+.tossbtn:hover,.tossbtn.sel{border-color:var(--p);background:rgba(0,245,255,.12);box-shadow:0 4px 10px rgba(0,0,0,.3);transform:scale(1.03)}
 .throwbtn{padding:11px 30px;border-radius:11px;border:none;background:linear-gradient(135deg,var(--p),var(--s));color:#000;font-family:'Orbitron',sans-serif;font-size:clamp(10px,2vw,14px);font-weight:900;cursor:pointer;letter-spacing:2px;transition:all .28s;display:none}
-.throwbtn:hover{transform:scale(1.05);box-shadow:0 0 24px rgba(0,245,255,.6)}
+.throwbtn:hover{transform:scale(1.03);box-shadow:0 8px 14px rgba(0,0,0,.34)}
 #toss-result{text-align:center;min-height:85px;width:100%;max-width:440px;display:none}
 
 /* ── GAMEPLAY ── */
@@ -196,6 +249,7 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 .sname{font-size:clamp(8px,1.4vw,10px);letter-spacing:2px;color:rgba(255,255,255,.52);margin-bottom:1px}
 .sval{font-family:'Orbitron',sans-serif;font-size:clamp(20px,4.2vw,42px);font-weight:900;line-height:1}
 .sval.you{color:var(--p)}.sval.cpu{color:var(--acc)}
+.sval.counting{transform:translateY(-2px);transition:transform .16s ease}
 .scenter{text-align:center;flex-shrink:0}
 .inbadge{background:linear-gradient(90deg,var(--p),var(--s));color:#000;font-family:'Orbitron',sans-serif;font-size:7px;font-weight:700;letter-spacing:2px;padding:3px 9px;border-radius:14px;margin-bottom:4px;white-space:nowrap;display:inline-block}
 .wkdisp{font-size:clamp(7px,1.4vw,10px);color:rgba(255,255,255,.42);white-space:nowrap}
@@ -230,6 +284,9 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 /* cpu personality indicator (new) */
 .cpu-persona{display:inline-flex;align-items:center;gap:4px;background:rgba(255,68,68,.1);border:1px solid rgba(255,68,68,.25);border-radius:10px;padding:3px 8px;font-size:8px;color:var(--acc);font-family:'Orbitron',sans-serif;margin-bottom:6px;letter-spacing:1px}
 #game-status{text-align:center;font-family:'Orbitron',sans-serif;font-size:clamp(12px,2.8vw,21px);font-weight:700;height:42px;display:flex;align-items:center;justify-content:center;margin-bottom:9px;letter-spacing:2px}
+.cpu-taunt{display:none;max-width:620px;width:100%;text-align:center;margin:-2px 0 8px;font-family:'Orbitron',sans-serif;font-size:clamp(8px,1.7vw,11px);letter-spacing:1.6px;color:#ffd0d9;background:linear-gradient(90deg,rgba(255,60,100,.08),rgba(255,170,0,.08));border:1px solid rgba(255,120,150,.28);border-radius:999px;padding:5px 10px;animation:tauntPop .32s cubic-bezier(.34,1.56,.64,1)}
+@keyframes tauntPop{from{transform:translateY(6px) scale(.95);opacity:0}to{transform:none;opacity:1}}
+#gameplay-screen.score-flash .scoreboard{box-shadow:0 0 0 1px rgba(255,255,255,.06),0 8px 16px rgba(0,0,0,.25)}
 #choice-panel{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;width:100%;max-width:620px}
 .cbtn{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:clamp(7px,1.6vw,14px) 4px;border-radius:11px;border:2px solid rgba(0,245,255,.2);background:rgba(0,0,0,.45);cursor:pointer;transition:all .28s cubic-bezier(.34,1.56,.64,1);color:#fff;backdrop-filter:blur(10px);position:relative;overflow:hidden}
 .cbtn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 60%,rgba(255,255,255,.04));pointer-events:none}
@@ -237,7 +294,7 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 .cbtn .cn{font-family:'Orbitron',sans-serif;font-size:clamp(10px,2vw,17px);font-weight:900;color:var(--p)}
 .cbtn .cl{font-size:6px;color:rgba(255,255,255,.32);letter-spacing:2px}
 .cbtn.hint-btn{border-color:#ff8800!important;background:rgba(255,136,0,.1)!important}
-.cbtn:hover{border-color:var(--p);background:rgba(0,245,255,.11);box-shadow:0 0 16px rgba(0,245,255,.35);transform:translateY(-4px) scale(1.07)}
+.cbtn:hover{border-color:var(--p);background:rgba(0,245,255,.11);box-shadow:0 6px 12px rgba(0,0,0,.28);transform:translateY(-3px) scale(1.05)}
 .cbtn:active{transform:scale(.94)}
 .streak-badge{display:none;align-items:center;gap:4px;background:rgba(255,80,0,.14);border:1px solid rgba(255,120,0,.35);border-radius:9px;padding:3px 10px;font-family:'Orbitron',sans-serif;font-size:8px;color:#ff8800;letter-spacing:2px;margin-bottom:6px;width:100%;max-width:620px;justify-content:center}
 .qbtn{margin-top:10px;padding:6px 18px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.38);font-family:'Exo 2',sans-serif;font-size:10px;cursor:pointer;transition:all .28s}
@@ -263,7 +320,7 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 .re-val{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;color:var(--p)}
 .rbtns{display:flex;gap:7px}
 .ragain{flex:1;padding:11px;border-radius:11px;border:none;background:linear-gradient(135deg,var(--p),var(--s));color:#000;font-family:'Orbitron',sans-serif;font-size:clamp(9px,1.7vw,11px);font-weight:900;cursor:pointer;letter-spacing:2px;transition:all .28s}
-.ragain:hover{transform:scale(1.05);box-shadow:0 0 18px rgba(0,245,255,.5)}
+.ragain:hover{transform:scale(1.03);box-shadow:0 8px 14px rgba(0,0,0,.35)}
 .rmenu{flex:1;padding:11px;border-radius:11px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.05);color:#fff;font-family:'Orbitron',sans-serif;font-size:clamp(9px,1.7vw,11px);font-weight:700;cursor:pointer;letter-spacing:2px;transition:all .28s}
 .rmenu:hover{background:rgba(255,255,255,.12);transform:scale(1.05)}
 .blink{margin-top:11px;color:rgba(255,255,255,.3);font-size:9px;cursor:pointer;letter-spacing:2px;transition:all .28s;background:none;border:none;font-family:'Exo 2',sans-serif}
@@ -277,12 +334,12 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 @keyframes mpop{from{transform:scale(.62) translateY(24px);opacity:0}to{transform:none;opacity:1}}
 .mmtitle{font-family:'Orbitron',sans-serif;font-size:clamp(12px,2.6vw,19px);font-weight:900;color:var(--p);text-align:center;margin-bottom:15px;letter-spacing:3px}
 .ninput{width:100%;background:rgba(0,0,0,.58);border:2px solid var(--p);border-radius:10px;padding:11px 14px;font-family:'Orbitron',sans-serif;font-size:15px;color:#fff;text-align:center;margin-bottom:13px;outline:none}
-.ninput:focus{border-color:var(--s);box-shadow:0 0 13px rgba(0,245,255,.28)}
+.ninput:focus{border-color:var(--s);box-shadow:0 0 0 2px rgba(255,255,255,.09)}
 .macts{display:flex;gap:6px}
 .mcancel{flex:1;padding:9px;border-radius:8px;border:1px solid rgba(255,255,255,.16);background:transparent;color:rgba(255,255,255,.52);font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;cursor:pointer;transition:all .28s;letter-spacing:1px}
 .mcancel:hover{background:rgba(255,255,255,.08);color:#fff}
 .msave{flex:1;padding:9px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--p),var(--s));color:#000;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:900;cursor:pointer;transition:all .28s;letter-spacing:1px}
-.msave:hover{transform:scale(1.05);box-shadow:0 0 13px rgba(0,245,255,.5)}
+.msave:hover{transform:scale(1.03);box-shadow:0 8px 14px rgba(0,0,0,.32)}
 
 /* ── LEADERBOARD ── */
 .lbtrophy{font-size:clamp(28px,5vw,46px);text-align:center;display:block;margin-bottom:7px}
@@ -321,7 +378,7 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 .ach-name{font-size:5.5px;color:rgba(255,255,255,.28);letter-spacing:.3px;line-height:1.2}
 .ach-item.unlocked .ach-name{color:var(--p)}
 .mclose{margin-top:11px;width:100%;padding:11px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--p),var(--s));color:#000;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:900;cursor:pointer;letter-spacing:2px;transition:all .28s}
-.mclose:hover{transform:scale(1.03);box-shadow:0 0 18px rgba(0,245,255,.5)}
+.mclose:hover{transform:scale(1.02);box-shadow:0 8px 14px rgba(0,0,0,.32)}
 
 /* ── THEME MODAL ── */
 .tgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
@@ -355,7 +412,7 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 .si-price{display:inline-flex;align-items:center;gap:2px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.26);border-radius:7px;padding:2px 7px;font-family:'Orbitron',sans-serif;font-size:9px;font-weight:900;color:#ffd700}
 .si-owned{display:inline-flex;align-items:center;gap:2px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.26);border-radius:7px;padding:2px 7px;font-family:'Orbitron',sans-serif;font-size:8px;font-weight:700;color:#00ff88}
 .buy-btn{width:100%;margin-top:5px;padding:5px;border-radius:7px;border:none;background:linear-gradient(135deg,var(--p),var(--s));color:#000;font-family:'Orbitron',sans-serif;font-size:8px;font-weight:900;cursor:pointer;letter-spacing:1px;transition:all .28s}
-.buy-btn:hover:not(:disabled){transform:scale(1.04);box-shadow:0 0 9px rgba(0,245,255,.35)}
+.buy-btn:hover:not(:disabled){transform:scale(1.03);box-shadow:0 7px 10px rgba(0,0,0,.28)}
 .buy-btn:disabled{opacity:.32;cursor:not-allowed;transform:none}
 
 /* ── TOAST & FLOATERS ── */
@@ -368,8 +425,28 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 /* big play celebration */
 .big-celebrate{position:fixed;inset:0;z-index:300;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s}
 .big-celebrate.show{opacity:1}
-.bc-text{font-family:'Orbitron',sans-serif;font-size:clamp(28px,7vw,60px);font-weight:900;color:var(--p);text-align:center;animation:bcPop .5s cubic-bezier(.34,1.56,.64,1);text-shadow:0 0 30px var(--p);pointer-events:none}
-@keyframes bcPop{from{transform:scale(0) rotate(-10deg)}to{transform:scale(1) rotate(0)}}
+.bc-text{font-family:'Orbitron',sans-serif;font-size:clamp(28px,7vw,60px);font-weight:900;color:var(--p);text-align:center;animation:bcPop .5s cubic-bezier(.34,1.56,.64,1);text-shadow:0 8px 24px rgba(0,0,0,.4);pointer-events:none}
+@keyframes bcPop{from{transform:scale(.7) translateY(16px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+/* innings transition card */
+.innings-card{position:fixed;inset:0;z-index:330;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);pointer-events:none}
+.innings-card.show{display:flex}
+.innings-box{background:linear-gradient(160deg,rgba(12,20,36,.95),rgba(8,14,24,.95));border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:18px 22px;min-width:240px;text-align:center;animation:inningsIn .45s cubic-bezier(.34,1.56,.64,1)}
+.innings-title{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:3px;color:var(--p);margin-bottom:7px}
+.innings-sub{font-size:10px;color:rgba(255,255,255,.72);letter-spacing:1px}
+@keyframes inningsIn{from{transform:scale(.86) translateY(20px);opacity:0}to{transform:none;opacity:1}}
+/* wicket cinematic */
+#gameplay-screen.wicket-hit{animation:wicketShake .42s ease-in-out}
+#gameplay-screen.wicket-hit::after{content:'';position:fixed;inset:0;background:rgba(255,55,55,.14);pointer-events:none;animation:wicketFlash .42s ease-out}
+@keyframes wicketShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+@keyframes wicketFlash{0%{opacity:1}100%{opacity:0}}
+/* ball impact + press interactions */
+#gameplay-screen.ball-impact .arena{animation:ballNudge .28s ease-out}
+@keyframes ballNudge{0%{transform:scale(1)}50%{transform:scale(1.01) translateY(-2px)}100%{transform:none}}
+.mbtn:active,.start-game-btn:active,.throwbtn:active,.tossbtn:active,.cbtn:active{transform:translateY(1px) scale(.97)}
+/* power-up burst */
+.powerup-burst{position:fixed;inset:0;z-index:320;pointer-events:none}
+.powerup-burst::before{content:'';position:absolute;left:50%;top:60%;width:18px;height:18px;border-radius:50%;border:2px solid rgba(0,245,255,.55);transform:translate(-50%,-50%);animation:pbRing .6s ease-out}
+@keyframes pbRing{from{opacity:.9;transform:translate(-50%,-50%) scale(.4)}to{opacity:0;transform:translate(-50%,-50%) scale(8)}}
 
 /* ANIMS */
 .rev{animation:revA .52s cubic-bezier(.34,1.56,.64,1)}
@@ -383,7 +460,7 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 
 @media(max-width:480px){
   header{padding:6px 7px}.gtitle{display:none}main{padding:5px 4px}
-  #choice-panel{gap:3px}.cbtn{padding:6px 2px;border-radius:9px}.cbtn .cl{display:none}
+  #choice-panel{gap:4px}.cbtn{padding:10px 3px;border-radius:10px;min-height:56px}.cbtn .cl{display:none}
   .scoreboard{padding:7px 8px}.arena{gap:9px}
   .tgrid{grid-template-columns:repeat(5,1fr)}
   .shop-items{grid-template-columns:1fr 1fr}
@@ -392,6 +469,8 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
   .diff-grid{grid-template-columns:1fr 1fr 1fr}
   .style-grid{grid-template-columns:repeat(3,1fr)}
   .stats-bar{flex-wrap:wrap;gap:4px}
+  .qbtn{padding:9px 20px;font-size:11px}
+  .mbtn{padding:14px 16px}
 }
 </style>
 </head>
@@ -400,18 +479,28 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 
 <!-- SCENE LAYER -->
 <div id="scene-layer">
+  <div class="scene-grain"></div>
+  <div class="scene-vignette" id="scene-vignette"></div>
+  <div class="parallax-glow" id="parallax-glow"><div class="pg1"></div><div class="pg2"></div><div class="pg3"></div></div>
+  <div id="cinematic-layer"><div class="cbeam b1"></div><div class="cbeam b2"></div></div>
   <!-- ocean -->
   <div class="wave wave1" id="w1"></div><div class="wave wave2" id="w2"></div><div class="wave wave3" id="w3"></div>
+  <div id="ocean-foam" class="theme-fx-layer"></div>
   <!-- forest -->
   <div id="forest-trees"></div>
+  <div id="forest-fireflies" class="theme-fx-layer"></div>
   <!-- neon -->
   <div class="neon-grid" id="ngrid"></div><div class="neon-scan" id="nscan"></div>
+  <div id="neon-pulse" class="theme-fx-layer"></div>
   <!-- desert -->
   <div class="dune dune1" id="d1"></div><div class="dune dune2" id="d2"></div><div class="sandstorm" id="sstorm"></div>
+  <div id="desert-heat" class="theme-fx-layer"></div>
   <!-- volcano -->
   <div class="lava-glow" id="lglow"></div><div class="lava-crack" id="lcrack"></div><div id="embers"></div>
+  <div id="volcano-smoke" class="theme-fx-layer"></div>
   <!-- galaxy -->
   <div class="nebula neb1" id="neb1"></div><div class="nebula neb2" id="neb2"></div><div id="shooting-stars"></div>
+  <div id="galaxy-ring" class="theme-fx-layer"></div>
   <!-- arctic (new) -->
   <div id="arctic-layer">
     <canvas id="arcticCanvas" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
@@ -451,6 +540,7 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
 
 <!-- BIG CELEBRATE OVERLAY -->
 <div class="big-celebrate" id="big-celebrate"><div class="bc-text" id="bc-text"></div></div>
+<div class="innings-card" id="innings-card"><div class="innings-box"><div class="innings-title" id="innings-title">INNINGS BREAK</div><div class="innings-sub" id="innings-sub">Target incoming</div></div></div>
 
 <div class="app">
   <header>
@@ -535,6 +625,29 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
             <div class="sc-desc">Safe, steady play</div>
           </div>
         </div>
+      </div>
+      <!-- Match settings -->
+      <div class="match-settings">
+        <div class="style-label">MATCH FORMAT</div>
+        <div class="ms-row">
+          <div class="ms-group">
+            <div class="ms-title">OVERS</div>
+            <div class="ms-options">
+              <button class="ms-opt selected" id="ov-1" onclick="selectOvers(1)">1</button>
+              <button class="ms-opt" id="ov-2" onclick="selectOvers(2)">2</button>
+              <button class="ms-opt" id="ov-5" onclick="selectOvers(5)">5</button>
+            </div>
+          </div>
+          <div class="ms-group">
+            <div class="ms-title">WICKETS</div>
+            <div class="ms-options">
+              <button class="ms-opt selected" id="wk-1" onclick="selectWickets(1)">1</button>
+              <button class="ms-opt" id="wk-2" onclick="selectWickets(2)">2</button>
+              <button class="ms-opt" id="wk-3" onclick="selectWickets(3)">3</button>
+            </div>
+          </div>
+        </div>
+        <div class="format-chip" id="format-chip">1 OVER · 1 WICKET</div>
       </div>
       <!-- Active powerups -->
       <div class="active-pu-section">
@@ -622,6 +735,7 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:10px 
         </div>
       </div>
       <div id="game-status"></div>
+      <div id="cpu-taunt" class="cpu-taunt"></div>
       <div id="choice-panel"></div>
       <button class="qbtn" onclick="quitGame()">⏹ QUIT MATCH</button>
     </div>
@@ -942,11 +1056,14 @@ let pScore=0,aiScore=0,pWickets=0,aiWickets=0;
 let currentInnings=1,isBatting=true,gameDone=false;
 let tossChoice=null,pHistory=[],ambTimers=[],sceneIVs=[];
 let ballsGame=0,runsStreak=0,ghostMode=0,secondLifeUsed=false;
+let oversPerInnings=1,wicketsLimit=1,maxBallsPerInnings=6,ballsInnings=0;
+let tauntTimer;
 const runOptions=[2,4,10,15,20];
 
 /* CANVAS */
 const canvas=document.getElementById('bgCanvas'),ctx=canvas.getContext('2d');
 let particles=[];
+const extraFXTimers=[];
 function resizeCanvas(){canvas.width=innerWidth;canvas.height=innerHeight}
 function mkP(){const t=THEMES[currentTheme],col=t.pc[Math.random()>.5?0:1];
   return{x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:Math.random()*2+.4,a:Math.random()*.7+.2,aDir:(Math.random()-.5)*.018,col}}
@@ -970,6 +1087,52 @@ function drawP(){
    ║  SCENE SYSTEM                                       ║
    ╚══════════════════════════════════════════════════════╝ */
 function clearSI(){sceneIVs.forEach(clearInterval);sceneIVs=[]}
+function clearFXTimers(){extraFXTimers.forEach(clearInterval);extraFXTimers.length=0}
+function resetThemeFX(){
+  ['ocean-foam','forest-fireflies','neon-pulse','desert-heat','volcano-smoke','galaxy-ring'].forEach(id=>{
+    const el=document.getElementById(id);if(el){el.style.opacity=0;el.innerHTML=''}
+  });
+  document.getElementById('parallax-glow').style.opacity=0;
+  document.getElementById('cinematic-layer').style.opacity=0;
+}
+function setThemeCinematic(scene){
+  const v=document.getElementById('scene-vignette');
+  const c=document.getElementById('cinematic-layer');
+  const p=document.getElementById('parallax-glow');
+  v.style.background='radial-gradient(ellipse at center,transparent 44%,rgba(0,0,0,.26) 100%)';
+  c.style.opacity='0';
+  p.style.opacity='.16';
+  if(scene==='forest'){v.style.background='radial-gradient(ellipse at center,transparent 42%,rgba(0,20,0,.3) 100%)';p.style.opacity='.1'}
+  else if(scene==='neon'){c.style.opacity='.22';p.style.opacity='.18'}
+  else if(scene==='desert'){v.style.background='radial-gradient(ellipse at center,transparent 45%,rgba(60,24,0,.26) 100%)';p.style.opacity='.1'}
+  else if(scene==='volcano'){c.style.opacity='.18';v.style.background='radial-gradient(ellipse at center,transparent 42%,rgba(30,0,0,.34) 100%)';p.style.opacity='.14'}
+  else if(scene==='galaxy'){v.style.background='radial-gradient(ellipse at center,transparent 40%,rgba(6,0,25,.38) 100%)';p.style.opacity='.2'}
+  else if(scene==='underwater'){v.style.background='radial-gradient(ellipse at center,transparent 44%,rgba(0,20,40,.3) 100%)';p.style.opacity='.12'}
+}
+function spawnForestFireflies(){
+  const c=document.getElementById('forest-fireflies');
+  c.style.opacity=1;
+  function mk(){
+    const f=document.createElement('div');f.className='fly';
+    const dur=4+Math.random()*4;
+    f.style.cssText=`left:${Math.random()*100}%;bottom:${10+Math.random()*22}%;animation-duration:${dur}s;animation-delay:${Math.random()*.4}s`;
+    c.appendChild(f);setTimeout(()=>f.remove(),dur*1000+500);
+  }
+  for(let i=0;i<10;i++)setTimeout(mk,i*180);
+  extraFXTimers.push(setInterval(mk,520));
+}
+function spawnVolcanoSmoke(){
+  const c=document.getElementById('volcano-smoke');
+  c.style.opacity=1;
+  function mk(){
+    const s=document.createElement('div');s.className='sm';
+    const dur=3+Math.random()*3;
+    s.style.cssText=`left:${40+Math.random()*22}%;animation-duration:${dur}s;animation-delay:${Math.random()*.6}s`;
+    c.appendChild(s);setTimeout(()=>s.remove(),dur*1000+500);
+  }
+  for(let i=0;i<8;i++)setTimeout(mk,i*200);
+  extraFXTimers.push(setInterval(mk,650));
+}
 function hideScene(){
   ['w1','w2','w3'].forEach(id=>document.getElementById(id).style.opacity=0);
   const ft=document.getElementById('forest-trees');if(ft){ft.style.opacity=0;ft.innerHTML=''}
@@ -983,7 +1146,9 @@ function hideScene(){
   document.getElementById('city-layer').style.opacity=0;
   document.getElementById('samurai-layer').style.opacity=0;
   document.getElementById('underwater-layer').style.opacity=0;
+  resetThemeFX();
   clearSI();
+  clearFXTimers();
 }
 function buildTrees(){
   const c=document.getElementById('forest-trees');c.style.cssText='position:absolute;bottom:0;left:0;right:0;height:100%;transition:opacity 1s';
@@ -1055,16 +1220,19 @@ function activateUnderwater(){
 
 function activateScene(scene){
   hideScene();setTimeout(()=>{
+    setThemeCinematic(scene);
     if(scene==='ocean')['w1','w2','w3'].forEach(id=>document.getElementById(id).style.opacity=1);
+    if(scene==='ocean')document.getElementById('ocean-foam').style.opacity=1;
     else if(scene==='forest'){buildTrees();setTimeout(()=>document.getElementById('forest-trees').style.opacity=1,60)}
-    else if(scene==='neon'){document.getElementById('ngrid').style.opacity=1;document.getElementById('nscan').style.opacity=1}
-    else if(scene==='desert')['d1','d2','sstorm'].forEach(id=>document.getElementById(id).style.opacity=1);
-    else if(scene==='volcano'){['lglow','lcrack'].forEach(id=>document.getElementById(id).style.opacity=1);spawnEmbers()}
-    else if(scene==='galaxy'){['neb1','neb2'].forEach(id=>document.getElementById(id).style.opacity=1);spawnGalaxyStars()}
+    else if(scene==='neon'){document.getElementById('ngrid').style.opacity=1;document.getElementById('nscan').style.opacity=1;document.getElementById('neon-pulse').style.opacity=1}
+    else if(scene==='desert'){['d1','d2','sstorm'].forEach(id=>document.getElementById(id).style.opacity=1);document.getElementById('desert-heat').style.opacity=1}
+    else if(scene==='volcano'){['lglow','lcrack'].forEach(id=>document.getElementById(id).style.opacity=1);spawnEmbers();spawnVolcanoSmoke()}
+    else if(scene==='galaxy'){['neb1','neb2'].forEach(id=>document.getElementById(id).style.opacity=1);spawnGalaxyStars();document.getElementById('galaxy-ring').style.opacity=1}
     else if(scene==='arctic')activateArctic();
     else if(scene==='city')activateCity();
     else if(scene==='samurai')activateSamurai();
     else if(scene==='underwater')activateUnderwater();
+    if(scene==='forest')spawnForestFireflies();
   },200);
 }
 
@@ -1157,6 +1325,44 @@ function bigCelebrate(txt){
   bct.textContent=txt;bc.classList.add('show');
   setTimeout(()=>bc.classList.remove('show'),1600);
 }
+function showInningsCard(title,sub=''){
+  const card=document.getElementById('innings-card');
+  document.getElementById('innings-title').textContent=title;
+  document.getElementById('innings-sub').textContent=sub;
+  card.classList.add('show');
+  setTimeout(()=>card.classList.remove('show'),1200);
+}
+function pulseBallImpact(){
+  const gp=document.getElementById('gameplay-screen');
+  gp.classList.add('ball-impact');
+  setTimeout(()=>gp.classList.remove('ball-impact'),280);
+}
+function playWicketCinematic(){
+  const gp=document.getElementById('gameplay-screen');
+  gp.classList.add('wicket-hit');
+  setTimeout(()=>gp.classList.remove('wicket-hit'),430);
+}
+function scoreTicker(elId,target){
+  const el=document.getElementById(elId);
+  const start=parseInt(el.textContent,10)||0;
+  const diff=target-start;
+  if(diff===0)return;
+  const steps=Math.min(12,Math.max(5,Math.abs(diff)));
+  const stepVal=diff/steps;
+  let i=0,val=start;
+  el.classList.add('counting');
+  const iv=setInterval(()=>{
+    i++;val+=stepVal;
+    el.textContent=(i>=steps?target:Math.round(val));
+    if(i>=steps){clearInterval(iv);el.classList.remove('counting')}
+  },28);
+}
+function powerupBurst(){
+  const burst=document.createElement('div');
+  burst.className='powerup-burst';
+  document.body.appendChild(burst);
+  setTimeout(()=>burst.remove(),620);
+}
 
 /* ACHIEVEMENT POPUP */
 function showAchUnlock(a){
@@ -1194,6 +1400,20 @@ function selectStyle(s){
   ['aggressive','balanced','defensive'].forEach(x=>document.getElementById('sc-'+x).classList.remove('selected'));
   document.getElementById('sc-'+s).classList.add('selected');
   sfx('select');
+}
+function updateFormatChip(){
+  const c=document.getElementById('format-chip');
+  if(c)c.textContent=`${oversPerInnings} OVER${oversPerInnings>1?'S':''} · ${wicketsLimit} WICKET${wicketsLimit>1?'S':''}`;
+}
+function selectOvers(o){
+  oversPerInnings=o;maxBallsPerInnings=o*6;
+  [1,2,5].forEach(x=>document.getElementById('ov-'+x).classList.toggle('selected',x===o));
+  updateFormatChip();sfx('select');
+}
+function selectWickets(w){
+  wicketsLimit=w;
+  [1,2,3].forEach(x=>document.getElementById('wk-'+x).classList.toggle('selected',x===w));
+  updateFormatChip();sfx('select');
 }
 function renderAPUList(){
   const list=document.getElementById('apu-list');list.innerHTML='';
@@ -1384,27 +1604,28 @@ function chooseBatBowl(bat){isBatting=bat;sfx('click');initInnings()}
    ║  GAME FLOW                                          ║
    ╚══════════════════════════════════════════════════════╝ */
 function initInnings(){
-  pScore=aiScore=pWickets=aiWickets=0;currentInnings=1;gameDone=false;
+  pScore=aiScore=pWickets=aiWickets=0;currentInnings=1;gameDone=false;ballsInnings=0;
   showScreen('gameplay-screen');updateSB();renderChoicePanel();updatePUChips();
   document.getElementById('target-bar').style.display='none';
   document.getElementById('pressure-wrap').style.display='none';
   setStatus(isBatting?`<span style="color:var(--p)">YOU ARE BATTING 🏏</span>`:`<span style="color:var(--acc)">YOU ARE BOWLING · AI BATTING 🤖</span>`);
+  showInningsCard('MATCH START',isBatting?'YOU BAT FIRST':'CPU BATS FIRST');
   resetArena();
   document.getElementById('sb-style').textContent=playStyle.toUpperCase();
   document.getElementById('sb-mood').textContent=cpuPersona.split(' ')[0];
 }
 function updateSB(){
   document.getElementById('score-p-name').textContent=playerName;
-  document.getElementById('p-score-val').textContent=pScore;
-  document.getElementById('ai-score-val').textContent=aiScore;
-  document.getElementById('wickets-disp').textContent=`YOU ${pWickets}/1 · CPU ${aiWickets}/1`;
+  scoreTicker('p-score-val',pScore);
+  scoreTicker('ai-score-val',aiScore);
+  document.getElementById('wickets-disp').textContent=`YOU ${pWickets}/${wicketsLimit} · CPU ${aiWickets}/${wicketsLimit}`;
   document.getElementById('innings-badge').textContent=currentInnings===1?(isBatting?'YOUR INNINGS':'CPU INNINGS'):'2ND INNINGS';
-  document.getElementById('sb-balls').textContent=ballsGame;
-  const rr=ballsGame?((isBatting?pScore:aiScore)/ballsGame).toFixed(1):'0.0';
+  document.getElementById('sb-balls').textContent=`${ballsInnings}/${maxBallsPerInnings}`;
+  const rr=ballsInnings?((isBatting?pScore:aiScore)/ballsInnings).toFixed(1):'0.0';
   document.getElementById('sb-rr').textContent=rr;
   // pressure
   if(currentInnings===2&&isBatting){
-    const target=aiScore+1,needed=target-pScore,remaining=Math.max(1,ballsGame);
+    const target=aiScore+1,needed=target-pScore,remaining=Math.max(1,maxBallsPerInnings-ballsInnings);
     const pressure=Math.min(100,Math.round((needed/(target||1))*100));
     const pw=document.getElementById('pressure-wrap');pw.style.display='block';
     document.getElementById('pressure-pct').textContent=pressure+'%';
@@ -1445,6 +1666,30 @@ function renderChoicePanel(){
   });
 }
 function setStatus(h){document.getElementById('game-status').innerHTML=h}
+function showTaunt(msg,d=1400){
+  const el=document.getElementById('cpu-taunt');
+  if(!el)return;
+  clearTimeout(tauntTimer);
+  el.textContent=msg;el.style.display='block';
+  tauntTimer=setTimeout(()=>{el.style.display='none'},d);
+}
+function maybeTaunt(kind){
+  const pn=cpuPersona.split(' ')[1]||'NEUTRAL';
+  const bank={
+    AGGRESSIVE:{out:['😤 Too slow, champ!','⚡ Read you like code!'],hit:['💥 I hit hard too!','🔥 Pressure is on!']},
+    DEFENSIVE:{out:['🛡️ Patience wins.','🧠 Safe play, big result.'],hit:['🧱 Solid response.','📌 I stay steady.']},
+    CHAOTIC:{out:['🎲 Didn’t see that coming?','🌀 Chaos mode!'],hit:['🎭 Random but dangerous!','🎰 Lucky? maybe.']},
+    ANALYST:{out:['📊 Pattern detected. OUT.','🧠 Predictive model: success.'],hit:['📈 Adaptation in progress.','🔍 Data says chase harder.']},
+    NEUTRAL:{out:['🤖 Clean wicket.','⚙️ Calculated play.'],hit:['🤖 Nice exchange.','⚙️ Match intensity rising.']}
+  };
+  const group=(bank[pn]||bank.NEUTRAL)[kind]||[];
+  if(group.length)showTaunt(group[~~(Math.random()*group.length)]);
+}
+function pulseGameplayFrame(){
+  const gp=document.getElementById('gameplay-screen');
+  gp.classList.add('score-flash');
+  setTimeout(()=>gp.classList.remove('score-flash'),220);
+}
 function resetArena(){
   document.getElementById('p-hand-arena').textContent='✊';document.getElementById('ai-hand-arena').textContent='✊';
   const pn=document.getElementById('p-num'),an=document.getElementById('ai-num');
@@ -1461,12 +1706,13 @@ function spawnRunTrail(runs,isPlayer){
 
 function handleChoice(userChoice){
   if(gameDone)return;
+  pulseBallImpact();
   let effectiveChoice=userChoice;
   // Ghost bat: AI sees previous ball
   if(ghostMode>0&&isBatting&&pHistory.length>0){ghostMode--;if(ghostMode===0){delete activePU.pu_ghost;if((owned.powerups.pu_ghost||0)>0)owned.powerups.pu_ghost--;showToast('👻 Ghost Bat expired!');updatePUChips()}}
   // Mega six: force next scoring run to 20
   if(activePU.pu_megasix&&isBatting){effectiveChoice=20}
-  pHistory.push(effectiveChoice);ballsGame++;stats.ballsPlayed=(stats.ballsPlayed||0)+1;
+  pHistory.push(effectiveChoice);ballsGame++;ballsInnings++;stats.ballsPlayed=(stats.ballsPlayed||0)+1;
   document.querySelectorAll('.cbtn').forEach(b=>b.style.pointerEvents='none');
   const pn=document.getElementById('p-num');pn.textContent=effectiveChoice;pn.classList.add('vis','rev');
   document.getElementById('p-hand-arena').textContent=effectiveChoice;
@@ -1494,7 +1740,7 @@ function handleChoice(userChoice){
   if(activePU.pu_freeze&&isBatting&&pHistory.length>1){
     aiChoice=pHistory[pHistory.length-2]||runOptions[0];delete activePU.pu_freeze;
     if((owned.powerups.pu_freeze||0)>0)owned.powerups.pu_freeze--;
-    showToast('🧊 FREEZE used! AI locked!');sfx('freeze');updatePUChips();
+    showToast('🧊 FREEZE used! AI locked!');sfx('freeze');powerupBurst();updatePUChips();
   }
   setTimeout(()=>{
     const an=document.getElementById('ai-num');an.textContent=aiChoice;an.classList.add('vis','rev');
@@ -1521,15 +1767,17 @@ function resolveBall(pN,aN){
       showToast('🛡️ Shield saved you!');updatePUChips();
       setTimeout(()=>{resetArena();setStatus('');renderChoicePanel();btns.forEach(b=>b.style.pointerEvents='auto')},1600);return;
     }
-    sfx('out');setStatus(`<span class="outshk" style="color:#ff4444;font-size:clamp(14px,3.2vw,24px)">OUT! ☠️</span>`);
+    sfx('out');setStatus(`<span class="outshk" style="color:#ff4444;font-size:clamp(14px,3.2vw,24px)">OUT! ☠️</span>`);maybeTaunt('out');playWicketCinematic();
     runsStreak=0;document.getElementById('streak-badge').style.display='none';
     if(isBatting)pWickets++;else aiWickets++;updateSB();
-    if((isBatting&&pWickets>=1)||(!isBatting&&aiWickets>=1)){
+    const wkNow=isBatting?pWickets:aiWickets;
+    if(wkNow>=wicketsLimit||ballsInnings>=maxBallsPerInnings){
       currentInnings++;
       if(currentInnings>2){setTimeout(endMatch,1400);return}
       isBatting=!isBatting;
       setTimeout(()=>{
-        resetArena();updateSB();sfx('innings');
+        ballsInnings=0;resetArena();updateSB();sfx('innings');
+        showInningsCard('INNINGS BREAK',`Target ${(isBatting?aiScore:pScore)+1} runs`);
         if(currentInnings===2){
           const tgt=(isBatting?aiScore:pScore)+1;
           const bar=document.getElementById('target-bar');bar.style.display='block';
@@ -1558,9 +1806,10 @@ function resolveBall(pN,aN){
     // Comeback bonus
     if(activePU.pu_comeback&&isBatting&&currentInnings===2&&(aiScore-pScore)>=10&&runs>=10){
       runs+=10;delete activePU.pu_comeback;if((owned.powerups.pu_comeback||0)>0)owned.powerups.pu_comeback--;
-      showToast('💪 COMEBACK BONUS +10!');sfx('powerup');updatePUChips();
+      showToast('💪 COMEBACK BONUS +10!');sfx('powerup');powerupBurst();updatePUChips();
     }
     if(isBatting){pScore+=runs;stats.totalRuns=(stats.totalRuns||0)+runs}else aiScore+=runs;
+    if(!isBatting&&runs>=10)maybeTaunt('hit');
     // Sound
     const orig=isBatting?pN:aN;
     if(orig===20||runs>=20)sfx('run20');else if(orig===15||runs>=15)sfx('run15');else if(orig===10)sfx('run10');else if(orig===4)sfx('run4');else sfx('run2');
@@ -1573,10 +1822,26 @@ function resolveBall(pN,aN){
       runsStreak++;
       if(runsStreak>=3){const sb=document.getElementById('streak-badge');sb.style.display='flex';document.getElementById('streak-txt').textContent=runsStreak+' BALL STREAK! 🔥';if(runsStreak===3||runsStreak===5||runsStreak===8)sfx('streak')}
     }
-    const sv=document.getElementById(isBatting?'p-score-val':'ai-score-val');sv.classList.add('spulse');setTimeout(()=>sv.classList.remove('spulse'),800);
+    const sv=document.getElementById(isBatting?'p-score-val':'ai-score-val');sv.classList.add('spulse');setTimeout(()=>sv.classList.remove('spulse'),800);pulseGameplayFrame();
     setStatus(`<span style="color:var(--s);font-size:clamp(13px,3vw,21px)">+${runs} RUNS ${orig>=20?'🚀':orig>=10?'🔥':'⚡'}</span>`);
     updateSB();if(runs>=10)spawnConfetti();
     if(currentInnings===2){const tgt=isBatting?aiScore:pScore,cur=isBatting?pScore:aiScore;if(cur>tgt){setTimeout(endMatch,800);return}}
+    if(ballsInnings>=maxBallsPerInnings){
+      if(currentInnings===1){
+        currentInnings++;isBatting=!isBatting;
+        setTimeout(()=>{
+          ballsInnings=0;resetArena();updateSB();sfx('innings');
+          const tgt=(isBatting?aiScore:pScore)+1;
+          showInningsCard('END OF INNINGS',`Target ${tgt} runs`);
+          const bar=document.getElementById('target-bar');bar.style.display='block';
+          bar.textContent=`🎯 TARGET: ${tgt} RUNS TO WIN`;
+          setStatus(isBatting?`<span style="color:var(--p)">YOUR CHASE STARTS! 🏏</span>`:`<span style="color:var(--acc)">CPU CHASE STARTS! 🤖</span>`);
+          renderChoicePanel();btns.forEach(b=>b.style.pointerEvents='auto');
+        },1200);
+        return;
+      }
+      setTimeout(endMatch,900);return;
+    }
   }
   setTimeout(()=>{resetArena();if(!gameDone)setStatus('');renderChoicePanel();btns.forEach(b=>b.style.pointerEvents='auto')},1650);
 }
@@ -1617,7 +1882,7 @@ function endMatch(){
 }
 function playAgain(){showScreen('play-screen')}
 function quitGame(){if(confirm('Quit current match?')){showScreen('menu-screen');resetGS()}}
-function resetGS(){pScore=aiScore=pWickets=aiWickets=0;gameDone=false;currentInnings=1;ballsGame=0;runsStreak=0;ghostMode=0;secondLifeUsed=false}
+function resetGS(){pScore=aiScore=pWickets=aiWickets=0;gameDone=false;currentInnings=1;ballsGame=0;ballsInnings=0;runsStreak=0;ghostMode=0;secondLifeUsed=false}
 
 /* CONFETTI */
 function spawnConfetti(){
@@ -1637,7 +1902,7 @@ function init(){
   document.getElementById('name-input').addEventListener('keydown',e=>{if(e.key==='Enter')saveName()});
   document.querySelectorAll('.mbtn').forEach(b=>b.addEventListener('mouseenter',()=>sfx('hover')));
   // default selections
-  selectDiff('easy');selectStyle('aggressive');
+  selectDiff('easy');selectStyle('aggressive');selectOvers(1);selectWickets(1);
 }
 window.addEventListener('load',init);
 </script>
